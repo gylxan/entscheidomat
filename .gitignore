@@ -9,6 +9,9 @@
 # production
 /build
 
+# PHP storm files
+.idea
+
 # misc
 .DS_Store
 .env.local
