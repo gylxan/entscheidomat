@@ -1,0 +1,14 @@
+.fireworks-body {
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: visible;
+    width: 1px;
+    height: 1px;
+    background-color: transparent;
+}
+
+.fireworks-star {
+    position: absolute;
+    background-color: transparent;
+}
