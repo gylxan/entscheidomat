@@ -250,11 +250,18 @@ class Entscheidomat extends Component {
 	 */
 	getFireworkOptions() {
 
+		return this.getYesNoOptions().concat(this.props.intl.formatMessage({id: "common.options.option.on_positive"}));
+	}
+
+	/**
+	 * Get yes and no options
+	 * @return {Array} Array with yes and no option
+	 */
+	getYesNoOptions() {
 		return [
 			this.props.intl.formatMessage({id: "common.options.option.no"}),
-			this.props.intl.formatMessage({id: "common.options.option.yes"}),
-			this.props.intl.formatMessage({id: "common.options.option.on_positive"})
-		];
+			this.props.intl.formatMessage({id: "common.options.option.yes"})
+		]
 	}
 
 	render() {
@@ -276,18 +283,22 @@ class Entscheidomat extends Component {
 					</Col>
 				</Row>
 
-				<h2 id="current-option" className="margin-top-30px" ref={(ref) => {
+				<h2 id="current-option" className="margin-top-30px text-center" ref={(ref) => {
 					this.showTitle = ref
 				}}>{this.state.currentOptionText}</h2>
 
-				<Button className="margin-top-20px" disabled={btnDisabled} size="lg" onClick={this.handleButtonClick}
-				        color="danger">{buttonTitle}</Button>
-
+				<div className="text-center">
+					<Button className="margin-top-20px" disabled={btnDisabled} size="lg"
+					        onClick={this.handleButtonClick}
+					        color="danger">{buttonTitle}</Button>
+				</div>
 				<div>
-					<div onClick={this.toggleOptions} className="margin-top-5px clickable"
-					     style={{display: "inline-block"}}>
-						<FontAwesome className="angle" rotate={rotateDeg} name="angle-right"
-						             style={{marginBottom: '1rem'}}/> <FormattedMessage id="common.options.title"/>
+					<div className="text-center">
+						<div onClick={this.toggleOptions} className="margin-top-5px clickable"
+						     style={{display: "inline-block"}}>
+							<FontAwesome className="angle" rotate={rotateDeg} name="angle-right"
+							             style={{marginBottom: '1rem'}}/> <FormattedMessage id="common.options.title"/>
+						</div>
 					</div>
 
 					{/*<div className="text-center clickable" onClick={this.toggleOptions} style={{ marginBottom: '1rem' }}> - Options - </div>*/}
@@ -322,14 +333,30 @@ class Entscheidomat extends Component {
 									</select>
 								</Col>
 							</FormGroup>
+							<FormGroup row>
+								<Label for="moveToUsedList" sm={2}>
+									<FormattedMessage id="common.options.movetousedlist"/>
+								</Label>
+								<Col sm={10}>
+									<select className="form-control" id="moveToUsedList" name="moveToUsed"
+									        defaultValue={0}
+									        ref={(ref) => {
+										        this.moveToUsedListSelect = ref;
+									        }}>
+										{self.getYesNoOptions().map(function (option, index) {
+											return <option key={option} value={index}>{option}</option>
+										})}
+									</select>
+								</Col>
+							</FormGroup>
 						</Form>
 					</Collapse>
 				</div>
-				<ReactAudioPlayer ref={(ref) => {
-					this.audioPlayer = ref;
-				}} src={this.state.selectedAudio === null ? "" : this.state.selectedAudio}/>
+				<ReactAudioPlayer ref={(ref) => {this.audioPlayer = ref;}}
+				                  src={this.state.selectedAudio === null ? "" : this.state.selectedAudio}/>
 			</div>
 		);
 	}
 }
+
 export default injectIntl(Entscheidomat);
