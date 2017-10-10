@@ -5,21 +5,18 @@
   "dependencies": {
     "babel-plugin-wildcard": "2.1.2",
     "bootstrap": "4.0.0-alpha.6",
+    "prop-types": "^15.6.0",
     "react": "^15.6.1",
     "react-addons-css-transition-group": "^15.6.0",
     "react-addons-transition-group": "^15.6.0",
     "react-audio-player": "^0.6.2",
+    "react-autosize-textarea": "^0.4.9",
     "react-dom": "^15.6.1",
     "react-fontawesome": "^1.6.1",
     "react-intl": "2.4.0",
     "react-router-dom": "4.2.2",
     "react-scripts": "1.0.13",
     "reactstrap": "^4.8.0"
-  },
-  "babel": {
-    "plugins": [
-      "wildcard"
-    ]
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,23 +1,37 @@
 import React, {Component} from 'react';
 import './Entscheidomat.css';
-import {Button, FormGroup, Label, Row, Col, Form, Collapse} from "reactstrap";
-import FontAwesome from "react-fontawesome";
+import {Button, Col, Row} from "reactstrap";
 import ReactAudioPlayer from "react-audio-player";
 import audio1 from "../audio/Angry-Beavers.mp3";
 import audio2 from "../audio/Jeopardy.mp3";
 import applause from "../audio/Applause.ogg";
 import zonk from "../audio/Zonk.mp3";
 import Fireworks from "./Fireworks";
-import {FormattedMessage, injectIntl} from "react-intl";
+import {injectIntl} from "react-intl";
+import PropTypes from "prop-types";
+import CollapsableOptions from "./CollapsableOptions";
+import TextareaAutosize from "react-autosize-textarea";
 
 /**
  * TODOs
  * - Save options
- * - Multiple lists
+ * - Multiple lists (save list function)
  * - Server to get translations and audios
+ * - Spread list in groups and choose random option from groups
  * - Fast loading of audio on Apple safari
+ * - Split render in multiple functions
+ * - Use List instead of textarea
+ * - Material UI?
  */
 
+
+const Title = (props) => {
+	return <h2 className="margin-top-30px text-center">{props.text}</h2>;
+};
+
+Title.PropTypes = {
+	text: PropTypes.string.isRequired
+};
 
 class Entscheidomat extends Component {
 
@@ -45,6 +59,27 @@ class Entscheidomat extends Component {
 	 * @type {string}
 	 */
 	static LOCAL_STORAGE_KEY = "entscheidomat-list";
+	handleButtonClick = () => {
+		if (this.state.status === Entscheidomat.STATUS.stopped) {
+			this.start();
+		} else {
+			this.stopLazy();
+		}
+	};
+	/**
+	 * Toggles the options
+	 */
+	toggleOptions = () => {
+		this.setState({
+			optionsCollapsed: !this.state.optionsCollapsed
+		});
+	};
+	/**
+	 *  Plays the audio player
+	 */
+	playAudio = () => {
+		this.audioPlayer.play();
+	};
 
 	constructor(props) {
 		super(props);
@@ -68,11 +103,13 @@ class Entscheidomat extends Component {
 		this.timerId = null;
 		this.fireworks = new Fireworks();
 
-		this.handleButtonClick = this.handleButtonClick.bind(this);
-		this.toggleOptions = this.toggleOptions.bind(this);
 		this.playAudio = this.playAudio.bind(this);
 	}
 
+	static getOptionText(optionValue) {
+		return (optionValue.charAt(0) === Entscheidomat.OPTION_MARKERS.positive || optionValue.charAt(0) === Entscheidomat.OPTION_MARKERS.negative) ?
+			optionValue.substr(1) : optionValue;
+	}
 
 	/**
 	 * Get the initial list from localstorage (when app was used before) or use the default start options
@@ -90,20 +127,6 @@ class Entscheidomat extends Component {
 	 */
 	getRandomOption() {
 		return this.state.list[Math.floor(Math.random() * this.state.list.length)];
-	}
-
-
-	handleButtonClick() {
-		if (this.state.status === Entscheidomat.STATUS.stopped) {
-			this.start();
-		} else {
-			this.stopLazy();
-		}
-	}
-
-	static getOptionText(optionValue) {
-		return (optionValue.charAt(0) === Entscheidomat.OPTION_MARKERS.positive || optionValue.charAt(0) === Entscheidomat.OPTION_MARKERS.negative) ?
-			optionValue.substr(1) : optionValue;
 	}
 
 	start() {
@@ -135,7 +158,6 @@ class Entscheidomat extends Component {
 		let listToSave = JSON.stringify(list);
 		localStorage.setItem(this.LOCAL_STORAGE_KEY, listToSave);
 	}
-
 
 	/**
 	 * Stops the randomizing lazy (2 sec delay)
@@ -208,23 +230,6 @@ class Entscheidomat extends Component {
 		});
 	}
 
-	/**
-	 * Toggles the options
-	 */
-	toggleOptions() {
-		this.setState({
-			optionsCollapsed: !this.state.optionsCollapsed
-		});
-	}
-
-
-	/**
-	 *  Plays the audio player
-	 */
-	playAudio() {
-		this.audioPlayer.play();
-	}
-
 	componentDidUpdate(prevProps, prevState) {
 		// Check the selected audio has changed, so play it
 		// On mobile devices the autoplay function won't work
@@ -249,7 +254,6 @@ class Entscheidomat extends Component {
 	 * Get the options for the firework
 	 */
 	getFireworkOptions() {
-
 		return this.getYesNoOptions().concat(this.props.intl.formatMessage({id: "common.options.option.on_positive"}));
 	}
 
@@ -261,13 +265,12 @@ class Entscheidomat extends Component {
 		return [
 			this.props.intl.formatMessage({id: "common.options.option.no"}),
 			this.props.intl.formatMessage({id: "common.options.option.yes"})
-		]
+		];
 	}
 
 	render() {
 		let buttonTitle = this.state.status === Entscheidomat.STATUS.started ? "Stop" : (this.state.status === Entscheidomat.STATUS.stopping ? "..." : "Start");
 		let btnDisabled = this.state.list.length === 0 || this.state.status === "stopping",
-			rotateDeg = this.state.optionsCollapsed ? 90 : null,
 			listString = this.state.list.join("\n");
 
 
@@ -276,87 +279,65 @@ class Entscheidomat extends Component {
 			<div className="App">
 				<Row>
 					<Col md={4} className="offset-md-4">
-					<textarea style={{minHeight: "150px"}} ref={(textarea) => {
-						this.textarea = textarea;
-					}} className="form-control"
-					          defaultValue={listString}></textarea>
+						<TextareaAutosize style={{minHeight: "10em"}}
+						                  innerRef={(ref) => {this.textarea = ref;}}
+						                  className="form-control" defaultValue={listString}/>
 					</Col>
 				</Row>
-
-				<h2 id="current-option" className="margin-top-30px text-center" ref={(ref) => {
-					this.showTitle = ref
-				}}>{this.state.currentOptionText}</h2>
+				<Title text={this.state.currentOptionText}/>
 
 				<div className="text-center">
 					<Button className="margin-top-20px" disabled={btnDisabled} size="lg"
 					        onClick={this.handleButtonClick}
 					        color="danger">{buttonTitle}</Button>
 				</div>
-				<div>
-					<div className="text-center">
-						<div onClick={this.toggleOptions} className="margin-top-5px clickable"
-						     style={{display: "inline-block"}}>
-							<FontAwesome className="angle" rotate={rotateDeg} name="angle-right"
-							             style={{marginBottom: '1rem'}}/> <FormattedMessage id="common.options.title"/>
-						</div>
-					</div>
+				<Row>
+					<Col md={4} className="offset-md-4">
+						<CollapsableOptions options={[
+							{
+								name: "audios",
+								label: this.props.intl.formatMessage({id: "common.options.music"}),
+								values: this.getAudioOptions(),
+								reference: (ref) => {this.audioSelect = ref;},
+								mapFunc: (audioFileName) => {
+									let lastSlash = audioFileName.lastIndexOf('/'),
+										length = audioFileName.indexOf(".") - lastSlash - 1,
+										audioName = audioFileName === self.noMusicOption ? audioFileName : audioFileName.substr(lastSlash + 1, length);
+									return <option key={audioFileName}
+									               value={audioFileName}>{audioName}</option>;
+								}
+							},
+							{
+								name: "firework",
+								label: this.props.intl.formatMessage({id: "common.options.fireworks"}),
+								values: this.getFireworkOptions(),
+								default: 1,
+								reference: ref => this.fireworkSelect = ref,
+							},
+							{
+								name: "moveToUsedList",
+								label: this.props.intl.formatMessage({id: "common.options.movetousedlist"}),
+								values: this.getYesNoOptions(),
+								reference: ref => this.moveToUsedListSelect = ref,
+							},
 
-					{/*<div className="text-center clickable" onClick={this.toggleOptions} style={{ marginBottom: '1rem' }}> - Options - </div>*/}
-					<Collapse isOpen={this.state.optionsCollapsed}>
-						<Form>
-							<FormGroup row>
-								<Label for="audios" sm={2}><FormattedMessage id="common.options.music"/></Label>
-								<Col sm={10}>
-									<select className="form-control" id="audios" name="audio" ref={(ref) => {
-										this.audioSelect = ref;
-									}}>
-										{this.getAudioOptions().map(function (audio) {
-											let lastSlash = audio.lastIndexOf('/'),
-												length = audio.indexOf(".") - lastSlash - 1,
-												audioName = audio === self.noMusicOption ? audio : audio.substr(lastSlash + 1, length);
-											return <option key={audio}
-											               value={audio}>{audioName}</option>
-										})}
-									</select>
-								</Col>
-							</FormGroup>
-							<FormGroup row>
-								<Label for="firework" sm={2}><FormattedMessage id="common.options.fireworks"/></Label>
-								<Col sm={10}>
-									<select className="form-control" id="firework" name="firework" defaultValue={1}
-									        ref={(ref) => {
-										        this.fireworkSelect = ref;
-									        }}>
-										{self.getFireworkOptions().map(function (option, index) {
-											return <option key={option} value={index}>{option}</option>
-										})}
-									</select>
-								</Col>
-							</FormGroup>
-							<FormGroup row>
-								<Label for="moveToUsedList" sm={2}>
-									<FormattedMessage id="common.options.movetousedlist"/>
-								</Label>
-								<Col sm={10}>
-									<select className="form-control" id="moveToUsedList" name="moveToUsed"
-									        defaultValue={0}
-									        ref={(ref) => {
-										        this.moveToUsedListSelect = ref;
-									        }}>
-										{self.getYesNoOptions().map(function (option, index) {
-											return <option key={option} value={index}>{option}</option>
-										})}
-									</select>
-								</Col>
-							</FormGroup>
-						</Form>
-					</Collapse>
-				</div>
+						]}
+						/>
+					</Col>
+				</Row>
 				<ReactAudioPlayer ref={(ref) => {this.audioPlayer = ref;}}
 				                  src={this.state.selectedAudio === null ? "" : this.state.selectedAudio}/>
 			</div>
 		);
 	}
 }
+
+// Asynchroner zugriff auf alte states, z.B. bei
+// Use this to prevent strange states because set state won't be called immediatly
+// handleCLick = (event) => {
+// 	this.setState((prevState, props) => ({
+// 		clicks: prevState.clicks
+// 	}))
+// }
 
 export default injectIntl(Entscheidomat);
