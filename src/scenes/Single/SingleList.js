@@ -4,7 +4,13 @@ import Entscheidomat from "../../components/Entscheidomat";
 export default class SingleList extends Component {
 	render() {
 		return (
-			<div><Entscheidomat/></div>
-		)
+			<div className="App">
+				<div className="row">
+					<div className="col-md-4 offset-md-4">
+						<Entscheidomat/>
+					</div>
+				</div>
+			</div>
+		);
 	}
 }

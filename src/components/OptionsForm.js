@@ -3,13 +3,15 @@ import PropTypes from "prop-types";
 import {Col, Form, FormGroup, Label} from "reactstrap";
 
 
-// TODO Remove offsets
 const OptionLabel = (props) => {
 	return <Label for={props.name} sm={6}>{props.label ? props.label : props.name}</Label>;
 };
+OptionLabel.propTypes = {
+	name: PropTypes.string.isRequired,
+	label: PropTypes.string
+};
 
 class OptionsForm extends React.Component {
-
 	static propTypes = {
 		options: PropTypes.arrayOf(PropTypes.shape({
 			name: PropTypes.string.isRequired,
@@ -26,9 +28,11 @@ class OptionsForm extends React.Component {
 
 
 	render() {
-		return <Form>
-			{this.renderOptions()}
-		</Form>;
+		return (
+			<Form>
+				{this.renderOptions()}
+			</Form>
+		);
 	}
 
 	renderOptions() {
