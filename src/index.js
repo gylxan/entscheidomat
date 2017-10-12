@@ -9,14 +9,17 @@ import en from 'react-intl/locale-data/en';
 import de from 'react-intl/locale-data/de';
 import I18nMessageFactory from "./services/I18nMessageFactory";
 import App from "./App";
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-addLocaleData([...de,...en]);
+addLocaleData([...de, ...en]);
 
 // Get the current user language
 let userLang = navigator.language || navigator.userLanguage;
 
 ReactDOM.render(
-	<IntlProvider locale={userLang} messages={I18nMessageFactory.getMessages(userLang)}>
-		<App />
-	</IntlProvider>, document.getElementById('root'));
+	<MuiThemeProvider>
+		<IntlProvider locale={userLang} messages={I18nMessageFactory.getMessages(userLang)}>
+			<App/>
+		</IntlProvider>
+	</MuiThemeProvider>, document.getElementById('root'));
 registerServiceWorker();

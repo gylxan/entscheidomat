@@ -6,8 +6,8 @@ import en from "../i18n/en";
  * @type {{de: {[common.options.title], [common.options.music], [common.options.fireworks], [common.options.option.no_music], [common.options.option.yes], [common.options.option.no], [common.options.option.on_positive]}, en: {[common.options.title], [common.options.music], [common.options.fireworks], [common.options.option.no_music], [common.options.option.yes], [common.options.option.no], [common.options.option.on_positive]}}}
  */
 const SUPPORTED_LANGS = {
-	de : de,
-	en : en
+	de: de,
+	en: en
 };
 export default class I18nMessageFactory {
 	/**
@@ -23,11 +23,26 @@ export default class I18nMessageFactory {
 	 */
 	static getMessages(lang) {
 		if (lang) {
-			if(typeof SUPPORTED_LANGS[lang]!== "undefined") {
-				return SUPPORTED_LANGS[lang];
+			if (typeof SUPPORTED_LANGS[lang] !== "undefined") {
+				return I18nMessageFactory.flattenMessages(SUPPORTED_LANGS[lang]);
 			}
-			return SUPPORTED_LANGS[I18nMessageFactory.DEFAULT];
+			return I18nMessageFactory.flattenMessages(SUPPORTED_LANGS[I18nMessageFactory.DEFAULT]);
 		}
 		return {};
+	}
+
+	static flattenMessages(nestedMessages, prefix = '') {
+		return Object.keys(nestedMessages).reduce((messages, key) => {
+			let value = nestedMessages[key];
+			let prefixedKey = prefix ? `${prefix}.${key}` : key;
+
+			if (typeof value === 'string') {
+				messages[prefixedKey] = value;
+			} else {
+				Object.assign(messages, I18nMessageFactory.flattenMessages(value, prefixedKey));
+			}
+
+			return messages;
+		}, {});
 	}
 }

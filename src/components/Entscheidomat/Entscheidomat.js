@@ -1,21 +1,19 @@
 import React, {Component} from 'react';
 import './Entscheidomat.css';
 import ReactAudioPlayer from "react-audio-player";
-import audio1 from "../audio/Angry-Beavers.mp3";
-import audio2 from "../audio/Jeopardy.mp3";
-import applause from "../audio/Applause.ogg";
-import zonk from "../audio/Zonk.mp3";
-import Fireworks from "./Fireworks";
-import {injectIntl} from "react-intl";
+import applause from "../../audio/Applause.ogg";
+import zonk from "../../audio/Zonk.mp3";
+import Fireworks from "../Fireworks";
 import PropTypes from "prop-types";
-import CollapsableOptions from "./CollapsableOptions";
-import TextareaAutosize from "react-autosize-textarea";
+import {RaisedButton, TextField} from "material-ui";
+import {injectIntl} from "react-intl";
+import Toolbar from "./components/Toolbar";
 
 /**
  * TODOs
  * - Save options
  * - Multiple lists (save list function)
- * - Server to get translations and audios
+ * - Server to get translations and audiosaudioFiles
  * - Spread list in groups and choose random option from groups
  * - Fast loading of audio on Apple safari
  * - Split render in multiple functions
@@ -32,14 +30,17 @@ Title.propTypes = {
 };
 
 const StartStopButton = (props) => {
-	let {className, isDisabled, onClick, ...other} = props;
-	return <button type="button" className={"btn btn-danger btn-lg " + className}
-	               disabled={isDisabled ? isDisabled : null}
-	               onClick={onClick} {...other}>{props.children}</button>;
+	let {isDisabled, onClick, ...other} = props;
+	return <RaisedButton fullWidth={true} primary={true} disabled={isDisabled}
+	                     onClick={onClick} {...other} label={props.label}/>;
 };
 StartStopButton.propTypes = {
 	isDisabled: PropTypes.bool,
-	onClick: PropTypes.func.isRequired
+	onClick: PropTypes.func.isRequired,
+	label: PropTypes.string,
+};
+StartStopButton.defaultProps = {
+	isDisabled: false
 };
 
 class Entscheidomat extends Component {
@@ -72,11 +73,16 @@ class Entscheidomat extends Component {
 		negative: "-"
 	};
 
-	/**
-	 * Key for the local storage caching
-	 * @type {string}
-	 */
-	static LOCAL_STORAGE_KEY = "entscheidomat-list";
+
+	static propTypes = {
+		list: PropTypes.arrayOf(PropTypes.string),
+		saveListFunc: PropTypes.func,
+		audioFiles: PropTypes.arrayOf(PropTypes.string)
+	};
+
+	static defaultProps = {
+		audioFiles: []
+	};
 
 	constructor(props) {
 		super(props);
@@ -91,10 +97,10 @@ class Entscheidomat extends Component {
 			// The currently selected audio
 			selectedAudio: null,
 			// List of initial options
-			list: Entscheidomat.getInitialListFromStorage()
+			list: this.props.list ? this.props.list : [],
 		};
 
-		this.noMusicOption = this.props.intl.formatMessage({id: "common.options.option.no_music"});
+		this.noMusicOption = this.props.intl.formatMessage({id: "common.options.music.no"});
 
 		this.timerId = null;
 		// Firework -> Will be initialised when the fireworks start
@@ -105,7 +111,7 @@ class Entscheidomat extends Component {
 	/**
 	 * Handle start / stop button click
 	 */
-	handleButtonClick = () => {
+	handleStartStopButtonClick = () => {
 		if (this.state.status === Entscheidomat.STATUS.stopped) {
 			this.start();
 		} else {
@@ -113,16 +119,7 @@ class Entscheidomat extends Component {
 		}
 	};
 
-	/**
-	 * Toggles the options
-	 */
-	toggleOptions = () => {
-		// https://github.com/reactstrap/reactstrap/issues/251
-		// When clicking to fast, it won't be showed correctly
-		this.setState((prevState, props) => ({
-			optionsCollapsed: !prevState.optionsCollapsed
-		}));
-	};
+
 	/**
 	 *  Plays the audio player
 	 */
@@ -131,21 +128,16 @@ class Entscheidomat extends Component {
 	};
 
 
+	/**
+	 * Get the current option text
+	 *
+	 * Checks the given value starts with a marker and removes it eventually
+	 * @param {string} optionValue The value to get the text from
+	 * @return {string} The option value without beginning marker
+	 */
 	static getOptionText(optionValue) {
 		return (optionValue.charAt(0) === Entscheidomat.OPTION_MARKERS.positive || optionValue.charAt(0) === Entscheidomat.OPTION_MARKERS.negative) ?
 			optionValue.substr(1) : optionValue;
-	}
-
-	/**
-	 * Get the initial list from localstorage (when app was used before) or use the default start options
-	 */
-	static getInitialListFromStorage() {
-		let list = localStorage.getItem(Entscheidomat.LOCAL_STORAGE_KEY);
-		if (list) {
-			return JSON.parse(list);
-		}
-		// Return the default list
-		return ['Option 1', 'Option 2', 'Option 3'];
 	}
 
 	/**
@@ -178,7 +170,7 @@ class Entscheidomat extends Component {
 		}, 100);
 		self.setState({
 			status: Entscheidomat.STATUS.started,
-			selectedAudio: this.audioSelect.value === self.noMusicOption ? null : this.audioSelect.value,
+			selectedAudio: this.toolbar.getWrappedInstance().getValue("music") === self.noMusicOption ? null : this.toolbar.getWrappedInstance().getValue("music"),
 			list: list
 		});
 		this.saveCurrentList(list);
@@ -189,8 +181,9 @@ class Entscheidomat extends Component {
 	 *  @param {Array} list List to save
 	 */
 	saveCurrentList(list) {
-		let listToSave = JSON.stringify(list);
-		localStorage.setItem(this.LOCAL_STORAGE_KEY, listToSave);
+		if (this.props.saveListFunc) {
+			this.props.saveListFunc(list);
+		}
 	}
 
 	/**
@@ -240,8 +233,8 @@ class Entscheidomat extends Component {
 	 * Starts the fireworks when is selected and starts timeout
 	 */
 	startFirework() {
-		if (Number(this.fireworkSelect.value) === 1
-			|| (Number(this.fireworkSelect.value) === 2 && this.hasCurrentOptionMarker(Entscheidomat.OPTION_MARKERS.positive))) {
+		if (Number(this.toolbar.getWrappedInstance().getValue("fireworks")) === 1
+			|| (Number(this.toolbar.getWrappedInstance().getValue("fireworks")) === 2 && this.hasCurrentOptionMarker(Entscheidomat.OPTION_MARKERS.positive))) {
 			if (this.fireworks === null) {
 				this.fireworks = new Fireworks();
 			}
@@ -274,7 +267,7 @@ class Entscheidomat extends Component {
 	 * Creates a list of entries from the text area (splitted by "\n")
 	 */
 	createList() {
-		return this.textarea.value.split("\n").filter(function (entry) {
+		return this.textarea.getValue().split("\n").filter(function (entry) {
 			return entry !== undefined && entry.trim() !== "";
 		});
 	}
@@ -295,101 +288,72 @@ class Entscheidomat extends Component {
 	}
 
 	/**
-	 * Get the paths for the audio files
-	 */
-	// TODO Put this in an extra service later
-	getAudioOptions() {
-		return [
-			this.noMusicOption,
-			audio1,
-			audio2
-		];
-	}
-
-	/**
-	 * Get the options for the firework
-	 */
-	getFireworkOptions() {
-		return this.getYesNoOptions().concat(this.props.intl.formatMessage({id: "common.options.option.on_positive"}));
-	}
-
-	/**
-	 * Get yes and no options
-	 * @return {Array} Array with yes and no option
-	 */
-	getYesNoOptions() {
-		return [
-			this.props.intl.formatMessage({id: "common.options.option.no"}),
-			this.props.intl.formatMessage({id: "common.options.option.yes"})
-		];
-	}
-
-	/**
 	 * Render
 	 * @return {XML}
 	 */
 	render() {
-		let buttonTitle = this.state.status === Entscheidomat.STATUS.started ? "Stop" : (this.state.status === Entscheidomat.STATUS.stopping ? "..." : "Start");
+		let buttonTitle = this.state.status === Entscheidomat.STATUS.started
+			? this.props.intl.formatMessage({id: "common.button.stop"})
+			: (this.state.status === Entscheidomat.STATUS.stopping ? "..." : this.props.intl.formatMessage({id: "common.button.start"}));
 		let btnDisabled = this.state.list.length === 0 || this.state.status === "stopping",
 			listString = this.state.list.join("\n");
 
 
-		let self = this;
+		const audioFileOptions = [{value: 0, text: this.noMusicOption}].concat(this.props.audioFiles.map(audioFile => {
+			const lastSlash = audioFile.lastIndexOf('/');
+			return {
+				value: audioFile,
+				text: audioFile.substr(lastSlash + 1, (audioFile.indexOf(".") - lastSlash - 1))
+			};
+		}));
 		return (
 			<div>
-				<TextareaAutosize style={{minHeight: "10em"}}
-				                  innerRef={(ref) => {this.textarea = ref;}}
-				                  className="form-control" defaultValue={listString}/>
+				<TextField
+					hintText={this.props.intl.formatMessage({id: "common.textarea.placeholder"})}
+					multiLine={true}
+					rows={10}
+					fullWidth={true}
+					defaultValue={listString}
+					ref={(ref) => {this.textarea = ref;}}
+				/>
 
 				<Title text={this.state.currentOptionText}/>
 
 				<div className="text-center">
 					<StartStopButton className="margin-top-20px" isDisabled={btnDisabled}
-					                 onClick={this.handleButtonClick}>{buttonTitle}</StartStopButton>
+					                 onClick={this.handleStartStopButtonClick} label={buttonTitle}/>
 				</div>
-				<CollapsableOptions delay={{hide: 0, show: 0}} options={[
-					{
-						name: "audios",
-						label: this.props.intl.formatMessage({id: "common.options.music"}),
-						values: this.getAudioOptions(),
-						reference: (ref) => {this.audioSelect = ref;},
-						mapFunc: (audioFileName) => {
-							let lastSlash = audioFileName.lastIndexOf('/'),
-								length = audioFileName.indexOf(".") - lastSlash - 1,
-								audioName = audioFileName === self.noMusicOption ? audioFileName : audioFileName.substr(lastSlash + 1, length);
-							return <option key={audioFileName}
-							               value={audioFileName}>{audioName}</option>;
-						}
-					},
-					{
-						name: "firework",
-						label: this.props.intl.formatMessage({id: "common.options.fireworks"}),
-						values: this.getFireworkOptions(),
-						default: 1,
-						reference: ref => this.fireworkSelect = ref,
-					},
-					{
-						name: "moveToUsedList",
-						label: this.props.intl.formatMessage({id: "common.options.movetousedlist"}),
-						values: this.getYesNoOptions(),
-						reference: ref => this.moveToUsedListSelect = ref,
-					},
-
-				]}
-				/>
 				<ReactAudioPlayer ref={(ref) => {this.audioPlayer = ref;}}
 				                  src={this.state.selectedAudio === null ? "" : this.state.selectedAudio}/>
+
+				<Toolbar className="toolbar" style={{marginTop: "2em", width: "100%"}} ref={(ref) => this.toolbar = ref}
+				         options={[
+					         {
+						         name: "music",
+						         default: 0,
+						         tooltip: this.props.intl.formatMessage({id: "common.options.music.title"}),
+						         iconClass: "fa fa-music",
+						         values: audioFileOptions,
+						         inactiveValue: 0
+					         },
+					         {
+						         name: "fireworks",
+						         isYesNo: true,
+						         default: true,
+						         tooltip: this.props.intl.formatMessage({id: "common.options.fireworks.title"}),
+						         iconClass: "fa fa-rocket",
+					         },
+					         {
+						         name: "moveToUsedList",
+						         isYesNo: true,
+						         tooltip: this.props.intl.formatMessage({id: "common.options.movetousedlist.title"}),
+						         iconClass: "material-icons",
+						         iconId: "low_priority"
+					         },
+				         ]}/>
 			</div>
 		);
 	}
 }
-
-// Asynchroner zugriff auf alte states, z.B. bei
-// Use this to prevent strange states because set state won't be called immediatly
-// handleCLick = (event) => {
-// 	this.setState((prevState, props) => ({
-// 		clicks: prevState.clicks
-// 	}))
-// }
 
 export default injectIntl(Entscheidomat);

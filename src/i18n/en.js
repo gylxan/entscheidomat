@@ -1,13 +1,39 @@
-export default  {
-	"common.options.title": "Options",
-	"common.options.music": "Music",
-	"common.options.fireworks": "Fireworks",
-	"common.options.movetousedlist" : "Move used to other list",
-	"common.options.option.no_music" : "No music",
-	"common.options.option.yes" : "Yes",
-	"common.options.option.no" : "No",
-	"common.options.option.on_positive" : "On positive",
-	"sites.notfound.title" : "Not found",
-	"sites.notfound.details" : "Sorry, an error occurred. The requested page wasn't found!",
-	"sites.notfound.button" : "Take me home!",
+export default {
+	"common": {
+		"options": {
+			"music": {
+				"title": "Music",
+				"no": "No Music"
+			},
+			"fireworks": {
+				"title": "Fireworks",
+				"no": "No fireworks",
+				"always": "Always",
+				"only_on_positive": "Only on positive"
+			},
+			"movetousedlist": {
+				"title": "Move chosen"
+
+			},
+			"other": "Other options",
+			"yes": "Yes",
+			"no": "No"
+		},
+		"button": {
+			"start": "Start",
+			"stop": "Stop",
+			"load": "Load",
+			"save": "Save",
+		},
+		"textarea": {
+			"placeholder": "Options to randomize"
+		}
+	},
+	"sites": {
+		"notfound": {
+			"title": "Not found",
+			"details": "Sorry, an error occurred. The requested page wasn't found!",
+			"button": "Take me home!",
+		}
+	}
 };

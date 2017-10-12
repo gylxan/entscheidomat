@@ -10,13 +10,16 @@ import NotFoundPage from "./scenes/NotFound/NotFoundPage";
  */
 const App = () => {
 	return (
-		<BrowserRouter>
-			<Switch>
-				<Route exact path="/" component={SingleList} />
-				<Route path="/groups" component={GroupLists} />
-				<Route component={NotFoundPage} />
-			</Switch>
-		</BrowserRouter>
-	)
+
+		<div className="container" style={{paddingTop: "10px"}}>
+			<BrowserRouter>
+				<Switch>
+					<Route exact path="/" component={SingleList}/>
+					<Route path="/groups" component={GroupLists}/>
+					<Route component={NotFoundPage}/>
+				</Switch>
+			</BrowserRouter>
+		</div>
+	);
 };
 export default App;
