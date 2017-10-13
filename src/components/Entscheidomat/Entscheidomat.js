@@ -23,7 +23,8 @@ import Toolbar from "./components/Toolbar";
 
 
 const Title = (props) => {
-	return <h2 className="margin-top-30px text-center">{props.text}</h2>;
+	const {text, className, ...otherProps} = props;
+	return <h2 className={"text-center " + className} {...otherProps}>{props.text}</h2>;
 };
 Title.propTypes = {
 	text: PropTypes.string.isRequired
@@ -280,9 +281,9 @@ class Entscheidomat extends Component {
 	 * @param prevState
 	 */
 	componentDidUpdate(prevProps, prevState) {
-		// Check the selected audio has changed, so play it
+		// Check the selected audio has changed, so play it, when it isn't null
 		// On mobile devices the autoplay function won't work
-		if (prevState.selectedAudio !== this.state.selectedAudio) {
+		if (prevState.selectedAudio !== this.state.selectedAudio && this.state.selectedAudio !== null) {
 			this.audioPlayer.audioEl.play();
 		}
 	}
@@ -311,22 +312,24 @@ class Entscheidomat extends Component {
 				<TextField
 					hintText={this.props.intl.formatMessage({id: "common.textarea.placeholder"})}
 					multiLine={true}
-					rows={10}
+					rows={8}
 					fullWidth={true}
 					defaultValue={listString}
 					ref={(ref) => {this.textarea = ref;}}
 				/>
 
-				<Title text={this.state.currentOptionText}/>
+				<Title className="margin-top-3" text={this.state.currentOptionText}/>
 
-				<div className="text-center">
-					<StartStopButton className="margin-top-20px" isDisabled={btnDisabled}
+				<div className="text-center margin-top-3">
+					<StartStopButton isDisabled={btnDisabled}
 					                 onClick={this.handleStartStopButtonClick} label={buttonTitle}/>
 				</div>
 				<ReactAudioPlayer ref={(ref) => {this.audioPlayer = ref;}}
 				                  src={this.state.selectedAudio === null ? "" : this.state.selectedAudio}/>
 
-				<Toolbar className="toolbar" style={{marginTop: "2em", width: "100%"}} ref={(ref) => this.toolbar = ref}
+				<Toolbar className="toolbar"
+				         style={{marginTop: "2em", width: "100%"}}
+				         ref={(ref) => this.toolbar = ref}
 				         options={[
 					         {
 						         name: "music",
@@ -343,13 +346,13 @@ class Entscheidomat extends Component {
 						         tooltip: this.props.intl.formatMessage({id: "common.options.fireworks.title"}),
 						         iconClass: "fa fa-rocket",
 					         },
-					         {
-						         name: "moveToUsedList",
-						         isYesNo: true,
-						         tooltip: this.props.intl.formatMessage({id: "common.options.movetousedlist.title"}),
-						         iconClass: "material-icons",
-						         iconId: "low_priority"
-					         },
+					         // {
+					         //    name: "moveToUsedList",
+					         //    isYesNo: true,
+					         //    tooltip: this.props.intl.formatMessage({id: "common.options.movetousedlist.title"}),
+					         //    iconClass: "material-icons",
+					         //    iconId: "low_priority"
+					         // },
 				         ]}/>
 			</div>
 		);
