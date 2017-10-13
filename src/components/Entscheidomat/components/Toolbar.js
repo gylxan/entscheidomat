@@ -40,16 +40,23 @@ class EntscheidomatToolbar extends React.Component {
 
 	constructor(props) {
 		super(props);
-		const optionValues = {};
-		props.options.map(option => {
-			return optionValues[option.name] = option.default ? option.default : option.isYesNo ? false : 0;
-		});
+		let optionValues = {};
+		// Fill options with default values or with false (when isYesNo active) or zero (index based)
+		for (let option of props.options) {
+			optionValues[option.name] = option.default ? option.default : option.isYesNo ? false : 0;
+		}
 		this.state = {
 			optionValues: optionValues
 		};
 
 	}
 
+	/**
+	 * Handle the change of the option with the given name
+	 * @param {Event} event Triggered event
+	 * @param  {string} value Value
+	 * @param {string} optionName Name of the option
+	 */
 	handleOptionChange = (event, value, optionName) => {
 		let options = this.state.optionValues;
 		options[optionName] = value;
@@ -58,6 +65,10 @@ class EntscheidomatToolbar extends React.Component {
 		});
 	};
 
+	/**
+	 * Handles the toggle of a option with the given name
+	 * @param {string} optionName Name of the option to toggle
+	 */
 	handleOptionToggle = (optionName) => {
 		let options = this.state.optionValues;
 		options[optionName] = !this.state.optionValues[optionName];
@@ -68,10 +79,10 @@ class EntscheidomatToolbar extends React.Component {
 
 
 	handleLoadClick = () => {
-		alert("Now we should load!");
+		console.log("Now we should load!");
 	};
 	handleSaveClick = (optionName) => {
-		alert("Now we should save!");
+		console.log("Now we should save!");
 	};
 
 	/**
@@ -121,36 +132,36 @@ class EntscheidomatToolbar extends React.Component {
 		return (
 			<Toolbar {...otherProps}>
 				<ToolbarGroup firstChild={true}>
-					<IconButton
-						disabled={true}
-						tooltipPosition="top-center"
-						iconClassName="material-icons"
-						tooltip={intl.formatMessage({id: "common.button.load"})}
-						onClick={this.handleLoadClick}
-					>folder_open</IconButton>
-					<IconButton
-						disabled={true}
-						tooltipPosition="top-center"
-						iconClassName="material-icons"
-						tooltip={intl.formatMessage({id: "common.button.save"})}
-						onClick={this.handleSaveClick}
-					>save</IconButton>
+					{/*<IconButton*/}
+					{/*disabled={true}*/}
+					{/*tooltipPosition="top-center"*/}
+					{/*iconClassName="material-icons"*/}
+					{/*tooltip={intl.formatMessage({id: "common.button.load"})}*/}
+					{/*onClick={this.handleLoadClick}*/}
+					{/*>folder_open</IconButton>*/}
+					{/*<IconButton*/}
+					{/*disabled={true}*/}
+					{/*tooltipPosition="top-center"*/}
+					{/*iconClassName="material-icons"*/}
+					{/*tooltip={intl.formatMessage({id: "common.button.save"})}*/}
+					{/*onClick={this.handleSaveClick}*/}
+					{/*>save</IconButton>*/}
 					{firstGroupOptions}
 				</ToolbarGroup>
 				<ToolbarGroup lastChild={true}>
-					<IconMenu
-						iconButtonElement={<IconButton iconClassName="material-icons"
-						                               tooltipPosition="top-center"
-						                               tooltip={this.props.intl.formatMessage({id: "common.options.other"})}>more_vert</IconButton>}
-						anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-						targetOrigin={{horizontal: 'right', vertical: 'top'}}
-					>
-						<MenuItem primaryText="Refresh"/>
-						<MenuItem primaryText="Send feedback"/>
-						<MenuItem primaryText="Settings"/>
-						<MenuItem primaryText="Help"/>
-						<MenuItem primaryText="Sign out"/>
-					</IconMenu>
+					{/*<IconMenu*/}
+					{/*iconButtonElement={<IconButton iconClassName="material-icons"*/}
+					{/*tooltipPosition="top-center"*/}
+					{/*tooltip={this.props.intl.formatMessage({id: "common.options.other"})}>more_vert</IconButton>}*/}
+					{/*anchorOrigin={{horizontal: 'right', vertical: 'top'}}*/}
+					{/*targetOrigin={{horizontal: 'right', vertical: 'top'}}*/}
+					{/*>*/}
+					{/*<MenuItem primaryText="Refresh"/>*/}
+					{/*<MenuItem primaryText="Send feedback"/>*/}
+					{/*<MenuItem primaryText="Settings"/>*/}
+					{/*<MenuItem primaryText="Help"/>*/}
+					{/*<MenuItem primaryText="Sign out"/>*/}
+					{/*</IconMenu>*/}
 				</ToolbarGroup>
 			</Toolbar>
 		);
