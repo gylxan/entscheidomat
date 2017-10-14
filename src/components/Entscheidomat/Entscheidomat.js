@@ -164,14 +164,16 @@ class Entscheidomat extends Component {
 		let list = this.createList();
 		this.timerId = setInterval(function () {
 			let optionValue = self.getRandomOption();
-			self.setState({
+			self.setState((prevState, newProps) => ({
 				currentOptionValue: optionValue,
 				currentOptionText: Entscheidomat.getOptionText(optionValue)
-			});
+			}));
 		}, 100);
 		self.setState({
 			status: Entscheidomat.STATUS.started,
-			selectedAudio: this.toolbar.getWrappedInstance().getValue("music") === self.noMusicOption ? null : this.toolbar.getWrappedInstance().getValue("music"),
+			selectedAudio: this.toolbar.getWrappedInstance().getValue("music") === self.noMusicOption
+				? null
+				: this.toolbar.getWrappedInstance().getValue("music"),
 			list: list
 		});
 		this.saveCurrentList(list);
@@ -344,7 +346,7 @@ class Entscheidomat extends Component {
 						         isYesNo: true,
 						         default: true,
 						         tooltip: this.props.intl.formatMessage({id: "common.options.fireworks.title"}),
-						         iconClass: "fa fa-rocket",
+						         iconClass: "icon-firework-2",
 					         },
 					         // {
 					         //    name: "moveToUsedList",
