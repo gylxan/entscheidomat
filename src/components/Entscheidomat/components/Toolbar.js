@@ -103,7 +103,7 @@ class EntscheidomatToolbar extends React.Component {
 					key={option.name}
 					tooltipPosition={"top-center"}
 					iconClassName={option.iconClass}
-					tooltip={option.tooltip}
+					// tooltip={option.tooltip}
 					iconStyle={{
 						color: (this.state.optionValues[option.name] ? "rgba(0, 0, 0, 0.87)" : "rgba(0, 0, 0, 0.26)")
 					}}
@@ -117,7 +117,8 @@ class EntscheidomatToolbar extends React.Component {
 					                               iconStyle={{
 						                               color: (option.hasOwnProperty("inactiveValue") && this.state.optionValues[option.name] === option.inactiveValue ? "rgba(0, 0, 0, 0.26)" : "rgba(0, 0, 0, 0.87)")
 					                               }}
-					                               tooltip={option.tooltip}>{option.iconId}</IconButton>}
+						// tooltip={option.tooltip}
+					>{option.iconId}</IconButton>}
 					anchorOrigin={{horizontal: 'right', vertical: 'top'}}
 					targetOrigin={{horizontal: 'right', vertical: 'top'}}
 					onChange={(event, value) => this.handleOptionChange(event, value, option.name)}
