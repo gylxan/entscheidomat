@@ -2,10 +2,12 @@
 ## Table of Contents
 - [Introduction](#introduction)
 - [The Entscheidomat](#the-entscheidomat)
+    - [Additional Settings](#additional-settings)
+    - [List features](#list-features)
 - [Available Scripts](#available-scripts)
-  - [npm start](#npm-start)
-  - [npm test](#npm-test)
-  - [npm run build](#npm-run-build)
+    - [npm start](#npm-start)
+    - [npm test](#npm-test)
+    - [npm run build](#npm-run-build)
 
 ## Introduction
 Everyone knows the problem of not being able to make a decision.
