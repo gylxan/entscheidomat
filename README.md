@@ -16,13 +16,13 @@ team mate or just which book you want to read next.
 The solution is pretty simple: It's the Entscheidomat, that will make the decision for you!
 
 ## The Entscheidomat
-The Entscheidomat is very simples. It's a list, where you can insert options you have to decide for.
+The Entscheidomat is very simple. It's a list, where you can insert options you have to decide for.
 One option is one line.
 After clicking on `Start` the options will be used and every few milliseconds a random option
-is selected an shown below. When you click now on `Stop`, the selecting gets slower and slower
+is selected and shown below. When you click now on `Stop`, the selecting gets slower and slower
 and shows the selected option in the end.
-Also the current list is saved in the local storage, when you start the randomizing.
-So don't have to enter the options the next time you visit the page!
+The current list is also saved in the local storage, when you start the randomizing.
+So you don't have to enter the options the next time you visit the page!
 
 
 ### Additional Settings
