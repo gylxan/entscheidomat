@@ -2,9 +2,12 @@
   "name": "entscheidomat",
   "version": "0.10.0",
   "private": true,
+  "author": {
+    "name": "Guido Lange",
+    "url": "https://github.com/gylxan"
+  },
   "dependencies": {
     "babel-plugin-wildcard": "2.1.2",
-    "bootstrap": "4.0.0-alpha.6",
     "material-ui": "^0.19.4",
     "prop-types": "^15.6.0",
     "react": "^15.6.1",
@@ -14,9 +17,7 @@
     "react-dom": "^15.6.1",
     "react-fontawesome": "^1.6.1",
     "react-intl": "2.4.0",
-    "react-router-dom": "4.2.2",
-    "react-scripts": "1.0.13",
-    "reactstrap": "^4.8.0"
+    "react-scripts": "1.0.13"
   },
   "scripts": {
     "start": "react-scripts start",

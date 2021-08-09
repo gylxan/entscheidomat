@@ -1,7 +1,6 @@
 import React from 'react';
 import SingleList from "./scenes/Single/SingleList";
-import GroupLists from "./scenes/Groups/GroupLists";
-import {BrowserRouter, Route, Switch} from "react-router-dom";
+import './App.css'
 
 
 /**
@@ -9,13 +8,8 @@ import {BrowserRouter, Route, Switch} from "react-router-dom";
  */
 const App = () => {
 	return (
-		<div className="container" style={{paddingTop: "10px"}}>
-			<BrowserRouter>
-				<Switch>
-					<Route path="/groups" component={GroupLists}/>
-					<Route component={SingleList}/>
-				</Switch>
-			</BrowserRouter>
+		<div className="App">
+			<SingleList/>
 		</div>
 	);
 };

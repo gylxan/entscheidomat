@@ -55,11 +55,16 @@
     transition: transform 0.3s;
 }
 
+.toolbar {
+    margin-top: 5rem;
+}
+
 @media (max-width: 540px) {
     .toolbar {
         position: fixed;
         bottom: 0;
         left: 0;
+        width: 100%;
     }
 }
 

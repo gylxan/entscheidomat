@@ -12,8 +12,10 @@ export default {
 				"only_on_positive": "Only on positive"
 			},
 			"movetousedlist": {
-				"title": "Move chosen"
-
+				"title": "Move chosen",
+				"no": "Do not move",
+				"yes": "Move",
+				"delete": "Delete",
 			},
 			"other": "Other options",
 			"yes": "Yes",

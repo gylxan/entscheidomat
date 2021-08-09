@@ -43,7 +43,7 @@ export default class SingleList extends Component {
 
 	render() {
 		return (
-			<div className="row">
+			<div className="single-list row">
 				<div className="col-md-4 offset-md-4">
 					<Entscheidomat list={SingleList.getOptionList()}
 					               saveListFunc={(list) => SingleList.saveOptionList(list)}

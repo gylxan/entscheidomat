@@ -32,7 +32,7 @@ Title.propTypes = {
 
 const StartStopButton = (props) => {
 	let {isDisabled, onClick, ...other} = props;
-	return <RaisedButton fullWidth={true} primary={true} disabled={isDisabled}
+	return <RaisedButton primary={true} disabled={isDisabled}
 	                     onClick={onClick} {...other} label={props.label}/>;
 };
 StartStopButton.propTypes = {
@@ -330,7 +330,6 @@ class Entscheidomat extends Component {
 				                  src={this.state.selectedAudio === null ? "" : this.state.selectedAudio}/>
 
 				<Toolbar className="toolbar"
-				         style={{marginTop: "2em", width: "100%"}}
 				         ref={(ref) => this.toolbar = ref}
 				         options={[
 					         {

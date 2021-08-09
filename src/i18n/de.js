@@ -16,7 +16,6 @@ export default {
 				"no": "Nicht verschieben",
 				"yes": "Verschieben",
 				"delete": "Löschen",
-
 			},
 			"other": "Andere Optionen",
 			"yes": "Ja",

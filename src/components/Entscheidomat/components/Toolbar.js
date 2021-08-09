@@ -133,36 +133,7 @@ class EntscheidomatToolbar extends React.Component {
 		return (
 			<Toolbar {...otherProps}>
 				<ToolbarGroup firstChild={true}>
-					{/*<IconButton*/}
-					{/*disabled={true}*/}
-					{/*tooltipPosition="top-center"*/}
-					{/*iconClassName="material-icons"*/}
-					{/*tooltip={intl.formatMessage({id: "common.button.load"})}*/}
-					{/*onClick={this.handleLoadClick}*/}
-					{/*>folder_open</IconButton>*/}
-					{/*<IconButton*/}
-					{/*disabled={true}*/}
-					{/*tooltipPosition="top-center"*/}
-					{/*iconClassName="material-icons"*/}
-					{/*tooltip={intl.formatMessage({id: "common.button.save"})}*/}
-					{/*onClick={this.handleSaveClick}*/}
-					{/*>save</IconButton>*/}
 					{firstGroupOptions}
-				</ToolbarGroup>
-				<ToolbarGroup lastChild={true}>
-					{/*<IconMenu*/}
-					{/*iconButtonElement={<IconButton iconClassName="material-icons"*/}
-					{/*tooltipPosition="top-center"*/}
-					{/*tooltip={this.props.intl.formatMessage({id: "common.options.other"})}>more_vert</IconButton>}*/}
-					{/*anchorOrigin={{horizontal: 'right', vertical: 'top'}}*/}
-					{/*targetOrigin={{horizontal: 'right', vertical: 'top'}}*/}
-					{/*>*/}
-					{/*<MenuItem primaryText="Refresh"/>*/}
-					{/*<MenuItem primaryText="Send feedback"/>*/}
-					{/*<MenuItem primaryText="Settings"/>*/}
-					{/*<MenuItem primaryText="Help"/>*/}
-					{/*<MenuItem primaryText="Sign out"/>*/}
-					{/*</IconMenu>*/}
 				</ToolbarGroup>
 			</Toolbar>
 		);
